@@ -23,9 +23,9 @@ class Pomodoro extends Component {
     this.pause = this.pause.bind(this);
     this.resume = this.resume.bind(this);
 
-    this.POMOTIME = 25 * 60 * 1000;
-    this.BREAKTIME = 5 * 60 * 1000;
-    this.LONGBREAK = 15 * 60 * 1000;
+    this.POMOTIME = 10000;//25 * 60 * 1000;
+    this.BREAKTIME = 10000;//5 * 60 * 1000;
+    this.LONGBREAK = 10000;//15 * 60 * 1000;
   }
 
   componentDidMount() {
@@ -60,12 +60,24 @@ class Pomodoro extends Component {
       }));
     }
 
-    if (this.state.elapsed && this.state.elapsed >= this.POMOTIME) {
+    if (this.state.onPomo && this.state.elapsed &&
+        this.state.elapsed >= this.POMOTIME) {
       if (!this.state.overtime) {
         this.setState((prevState, props) => ({
           pomos: prevState.pomos + 1,
           overtime: true
         }));
+        this.props.notificationHandler('Pomo done!');
+      }
+    }
+    
+    if (!this.state.onPomo && !this.state.overtime) {
+      const breakLength = this.longBreak ? this.LONGBREAK : this.BREAKTIME;
+      if (this.state.elapsed && this.state.elapsed >= breakLength) {
+        this.setState({
+          overtime: true
+        });
+        this.props.notificationHandler('Break done!');
       }
     }
   }
@@ -86,6 +98,7 @@ class Pomodoro extends Component {
       onPomo: false,
       paused: false,
       stopped: false,
+      overtime: false,
       elapsed: 0,
       pauseElapse: 0,
       longBreak: prevState.pomos % 4 === 0
