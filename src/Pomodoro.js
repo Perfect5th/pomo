@@ -13,7 +13,8 @@ class Pomodoro extends Component {
       paused: false,
       pauseElapse: 0,
       stopped: true,
-      totalWork: 0
+      totalWork: 0,
+      longBreak: false
     };
 
     this.startPomo = this.startPomo.bind(this);
@@ -24,6 +25,7 @@ class Pomodoro extends Component {
 
     this.POMOTIME = 25 * 60 * 1000;
     this.BREAKTIME = 5 * 60 * 1000;
+    this.LONGBREAK = 15 * 60 * 1000;
   }
 
   componentDidMount() {
@@ -58,12 +60,12 @@ class Pomodoro extends Component {
       }));
     }
 
-    if (this.state.elapsed && this.state.elapsed >=this.POMOTIME) {
+    if (this.state.elapsed && this.state.elapsed >= this.POMOTIME) {
       if (!this.state.overtime) {
-        this.setState({
-          pomos: this.state.pomos + 1,
+        this.setState((prevState, props) => ({
+          pomos: prevState.pomos + 1,
           overtime: true
-        });
+        }));
       }
     }
   }
@@ -72,7 +74,8 @@ class Pomodoro extends Component {
     this.setState({
       startTime: new Date(),
       elapsed: 0,
-      onPomo: true
+      onPomo: true,
+      overtime: false
     });
   }
 
@@ -85,6 +88,7 @@ class Pomodoro extends Component {
       stopped: false,
       elapsed: 0,
       pauseElapse: 0,
+      longBreak: prevState.pomos % 4 === 0
     }));
   }
 
@@ -124,6 +128,8 @@ class Pomodoro extends Component {
     let pauseHandler = this.state.paused ? this.resume : this.pause;
     let pauseDisabled = true;
 
+    let breakTime = this.state.longBreak ? this.LONGBREAK : this.BREAKTIME;
+
     if (this.state.onPomo) {
       stopDisabled = false;
       pauseDisabled = false;
@@ -137,7 +143,7 @@ class Pomodoro extends Component {
     } else if (!this.state.stopped) {
       stopDisabled = false;
       currEvent = 'break';
-      if (this.state.elapsed < this.BREAKTIME)
+      if (this.state.elapsed < breakTime)
         buttonDisabled = true;
     } else {
       pauseDisabled = false;
