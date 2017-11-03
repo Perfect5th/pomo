@@ -23,9 +23,9 @@ class Pomodoro extends Component {
     this.pause = this.pause.bind(this);
     this.resume = this.resume.bind(this);
 
-    this.POMOTIME = 10000;//25 * 60 * 1000;
-    this.BREAKTIME = 10000;//5 * 60 * 1000;
-    this.LONGBREAK = 10000;//15 * 60 * 1000;
+    this.POMOTIME = 25 * 60 * 1000;
+    this.BREAKTIME = 5 * 60 * 1000;
+    this.LONGBREAK = 15 * 60 * 1000;
   }
 
   componentDidMount() {
