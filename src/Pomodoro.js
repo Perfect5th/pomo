@@ -70,7 +70,7 @@ class Pomodoro extends Component {
         this.props.notificationHandler('Pomo done!');
       }
     }
-    
+
     if (!this.state.onPomo && !this.state.overtime) {
       const breakLength = this.longBreak ? this.LONGBREAK : this.BREAKTIME;
       if (this.state.elapsed && this.state.elapsed >= breakLength) {
@@ -128,6 +128,7 @@ class Pomodoro extends Component {
   }
 
   render() {
+    // TODO: refactor most of this into class methods
     let elapsed = this.state.elapsed ? (this.state.elapsed/1000).toFixed(0) : 0;
     let currEvent = 'Pomo';
 
@@ -163,10 +164,30 @@ class Pomodoro extends Component {
       stopDisabled = true;
     }
 
+    let timeLeft = (this.POMOTIME / 1000) - elapsed;
+    if (currEvent === 'break') {
+      if (this.state.longBreak)
+        timeLeft = (this.LONGBREAK / 1000) - elapsed;
+      else
+        timeLeft = (this.BREAKTIME / 1000) - elapsed;
+    }
+
+    let minLeft = timeLeft / 60;
+    minLeft = this.state.overtime ? Math.ceil(minLeft) : Math.floor(minLeft);
+    minLeft = Math.abs(minLeft);
+    let secLeft = Math.abs((timeLeft % 60).toFixed(0));
+    secLeft = secLeft < 10 ? `0${secLeft}` : `${secLeft}`;
+
+    const currMessage = this.state.overtime ? `Overtime for ${currEvent}` :
+      `Time left in ${currEvent}`;
+
+    const timerClass = this.state.overtime ? 'red-text' : '';
+
+
     return (
       <div className="Pomodoro">
         <p>{this.state.clock.toLocaleTimeString()}</p>
-        <p>Current {currEvent} Time: {elapsed} seconds</p>
+        <p>{currMessage}: <span className={timerClass}>{minLeft}:{secLeft}</span></p>
         <p>Completed Pomos: {this.state.pomos}</p>
 
         <button onClick={buttonHandler} className={buttonClass} disabled={buttonDisabled}>
