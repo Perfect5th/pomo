@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import pomo from './pomo.svg';
 import './App.css';
 import Pomodoro from './Pomodoro';
 
@@ -20,7 +20,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src={pomo} className="App-logo" alt="logo" />
           <h1 className="App-title">Pomo</h1>
         </header>
         <Pomodoro notificationHandler={this.fireNotification} />
