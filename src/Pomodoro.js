@@ -14,7 +14,8 @@ class Pomodoro extends Component {
       pauseElapse: 0,
       stopped: true,
       totalWork: 0,
-      longBreak: false
+      longBreak: false,
+      gap: 0
     };
 
     this.startPomo = this.startPomo.bind(this);
@@ -40,14 +41,16 @@ class Pomodoro extends Component {
   }
 
   tick() {
-    this.setState({
-      clock: new Date()
-    });
+
+    this.setState((prevState, props) => ({
+      clock: new Date(),
+      gap: (new Date()) - prevState.clock
+    }));
 
     if (!this.state.paused) {
       if (this.state.startTime) {
         this.setState((prevState, props) => ({
-          elapsed: prevState.elapsed + 1000
+          elapsed: prevState.elapsed + prevState.gap
         }));
       } else {
         this.setState({
